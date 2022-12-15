@@ -4,6 +4,7 @@
 #include <random>
 #include <fstream>
 #include <string>
+#include <vector>
 
 int result[3][3] = { //таблица для запросов проверки
     -1, -1, -1,
@@ -18,7 +19,7 @@ pthread_mutex_t mutexCheckThree; //мьютекс для проверки зан
 std::random_device rd;
 std::mt19937 mt(rd()); //хороший рандом
 bool fileFlag = false; //флаг для вида считывания и вывода
-extern std::ofstream output;
+std::vector<std::string> outputStrings = {};
 
 struct task  { //очередь заданий
     int name = 1; //имя задания <=> номер задания
@@ -59,16 +60,14 @@ void checkCode(int p) { //проверка кода для программис�
                 pthread_mutex_lock(&mutexWrite); //защита для вывода
                 std::cout << p + 1 << ": the task for the programmer " << i + 1 << " false!" << '\n';
                 if (fileFlag) {
-                    output << p + 1 << ": the task for the programmer " << i + 1 << " false!" << '\n';
-                    output.close();
+                    outputStrings.push_back(std::to_string(p + 1) + ": the task for the programmer " + std::to_string(i + 1) + " false!\n");
                 }
                 pthread_mutex_unlock(&mutexWrite);
             } else { //если удача
                 pthread_mutex_lock(&mutexWrite); //защита для вывода
                 std::cout << p + 1 << ": the task for the programmer " << i + 1 << " true!" << '\n';
                 if (fileFlag) {
-                    output << p + 1 << ": the task for the programmer " << i + 1 << " true!" << '\n';
-                    output.close();
+                    outputStrings.push_back(std::to_string(p + 1) + ": the task for the programmer " + std::to_string(i + 1) + " true!\n");
                 }
                 pthread_mutex_unlock(&mutexWrite);
             }
@@ -82,8 +81,7 @@ void doTask(int p, int whoCheck) { //выполнение задания
     pthread_mutex_lock(&mutexWrite); //защита для вывода
     std::cout << "Trying to do with the programmer " << p + 1 << '\n';
     if (fileFlag) {
-        output << "Trying to do with the programmer " << p + 1 << '\n';
-        output.close();
+        outputStrings.push_back("Trying to do with the programmer " + std::to_string(p + 1) + "\n");
     }
     pthread_mutex_unlock(&mutexWrite);
     checkUnlock(p); //код отправлен на проверку, программист свободен и может проверять
@@ -114,8 +112,7 @@ void* programmer(void *param) {
         pthread_mutex_lock(&mutexWrite); //защита для вывода
         std::cout << "The programmer " << p + 1 << " took the task " << taskNum << '\n';
         if (fileFlag) {
-            output << "The programmer " << p + 1 << " took the task " << taskNum << '\n';
-            output.close();
+            outputStrings.push_back("The programmer " + std::to_string(p + 1) + " took the task " + std::to_string(taskNum) + "\n");
         }
         pthread_mutex_unlock(&mutexWrite);
         //whoCheck - проверяющий
@@ -123,8 +120,7 @@ void* programmer(void *param) {
         pthread_mutex_lock(&mutexWrite); //защита для вывода
         std::cout << "Task " << taskNum << " completed!" << '\n';
         if (fileFlag) {
-            output << "Task " << taskNum << " completed!" << '\n';
-            output.close();
+            outputStrings.push_back("Task " + std::to_string(taskNum) + " completed!\n");
         }
         pthread_mutex_unlock(&mutexWrite);
         delete taskNow; //задание выполнено => его можно удалить
@@ -133,21 +129,20 @@ void* programmer(void *param) {
 }
 
 int main(int argc, char *argv[]) {
+    std::string fileOut;
     int n; //кол-во задач
     if (argc <= 1) {
         std::cin >> n;
     } else if (argv[1][0] == 'g') {
         n = mt() % 21;
         if (argc > 2) {
-            std::string fileOut = argv[2];
-            std::ofstream output(fileOut);
+            fileOut = argv[2];
             fileFlag = true;
         }
     } else if (argv[1][0] == 'f') {
         std::string fileIn = argv[2];
         std::ifstream input(fileIn);
-        std::string fileOut = argv[3];
-        std::ofstream output(fileOut);
+        fileOut = argv[3];
         fileFlag = true;
         input >> n;
         input.close();
@@ -175,6 +170,10 @@ int main(int argc, char *argv[]) {
     }
     std::cout << "All tasks completed!" << '\n'; //конец
     if (fileFlag) {
+        std::ofstream output(fileOut);
+        for (int i = 0; i < outputStrings.size(); ++i) {
+            std::cout << outputStrings[i];
+        }
         output << "All tasks completed!" << '\n';
         output.close();
     }
