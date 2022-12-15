@@ -1,0 +1,23 @@
+The programmer 2 took the task 1
+Trying to do with the programmer 2
+The programmer 3 took the task 2
+Trying to do with the programmer 3
+The programmer 1 took the task 3
+Trying to do with the programmer 1
+2: the task for the programmer 1 true!
+Task 3 completed!
+1: the task for the programmer 2 false!
+1: the task for the programmer 3 false!
+Trying to do with the programmer 2
+1: the task for the programmer 2 true!
+Trying to do with the programmer 3
+The programmer 1 took the task 4
+Trying to do with the programmer 1
+3: the task for the programmer 1 true!
+Task 4 completed!
+1: the task for the programmer 3 false!
+Task 1 completed!
+Trying to do with the programmer 3
+1: the task for the programmer 3 true!
+Task 2 completed!
+All tasks completed!
