@@ -60,7 +60,7 @@ void checkCode(int p) { //проверка кода для программис�
                 std::cout << p + 1 << ": the task for the programmer " << i + 1 << " false!" << '\n';
                 if (fileFlag) {
                     std::ofstream output(fileOut);
-                    std::cout << p + 1 << ": the task for the programmer " << i + 1 << " false!" << '\n';
+                    output << p + 1 << ": the task for the programmer " << i + 1 << " false!" << '\n';
                     output.close();
                 }
                 pthread_mutex_unlock(&mutexWrite);
@@ -69,7 +69,7 @@ void checkCode(int p) { //проверка кода для программис�
                 std::cout << p + 1 << ": the task for the programmer " << i + 1 << " true!" << '\n';
                 if (fileFlag) {
                     std::ofstream output(fileOut);
-                    std::cout << p + 1 << ": the task for the programmer " << i + 1 << " true!" << '\n';
+                    output << p + 1 << ": the task for the programmer " << i + 1 << " true!" << '\n';
                     output.close();
                 }
                 pthread_mutex_unlock(&mutexWrite);
@@ -85,7 +85,7 @@ void doTask(int p, int whoCheck) { //выполнение задания
     std::cout << "Trying to do with the programmer " << p + 1 << '\n';
     if (fileFlag) {
         std::ofstream output(fileOut);
-        std::cout << "Trying to do with the programmer " << p + 1 << '\n';
+        output << "Trying to do with the programmer " << p + 1 << '\n';
         output.close();
     }
     pthread_mutex_unlock(&mutexWrite);
@@ -118,7 +118,7 @@ void* programmer(void *param) {
         std::cout << "The programmer " << p + 1 << " took the task " << taskNum << '\n';
         if (fileFlag) {
             std::ofstream output(fileOut);
-            std::cout << "The programmer " << p + 1 << " took the task " << taskNum << '\n';
+            output << "The programmer " << p + 1 << " took the task " << taskNum << '\n';
             output.close();
         }
         pthread_mutex_unlock(&mutexWrite);
@@ -128,7 +128,7 @@ void* programmer(void *param) {
         std::cout << "Task " << taskNum << " completed!" << '\n';
         if (fileFlag) {
             std::ofstream output(fileOut);
-            std::cout << "Task " << taskNum << " completed!" << '\n';
+            output << "Task " << taskNum << " completed!" << '\n';
             output.close();
         }
         pthread_mutex_unlock(&mutexWrite);
@@ -141,6 +141,12 @@ int main(int argc, char *argv[]) {
     int n; //кол-во задач
     if (argc <= 1) {
         std::cin >> n;
+    } else if (argv[1][0] == 'g') {
+        n = mt() % 21;
+        if (argc > 2) {
+            fileOut = argv[2];
+            fileFlag = true;
+        }
     } else if (argv[1][0] == 'f') {
         std::string fileIn = argv[2];
         std::ifstream input(fileIn);
