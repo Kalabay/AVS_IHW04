@@ -172,7 +172,7 @@ int main(int argc, char *argv[]) {
     if (fileFlag) {
         std::ofstream output(fileOut);
         for (int i = 0; i < outputStrings.size(); ++i) {
-            std::cout << outputStrings[i];
+            output << outputStrings[i];
         }
         output << "All tasks completed!" << '\n';
         output.close();
